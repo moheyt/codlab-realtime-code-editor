@@ -59,7 +59,7 @@ const Home = () => {
             value={username}
             onKeyUp={handleInputEnter}
         />
-        <button className="btn joinBtn" onClick={joinRoom}>JONAS</button>
+        <button className="btn joinBtn" onClick={joinRoom}>JOIN</button>
         <span className="createInfo">
           If you don’t have invite create &nbsp;
           <a onClick={createNewRoom} href="" className="createNewBtn">new room</a>
