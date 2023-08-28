@@ -3,17 +3,22 @@ const app = express();
 const http = require('http');
 const path = require('path');
 const { Server } = require('socket.io');
+const cors = require('cors');
 const ACTIONS = require('./src/Actions');
 
 const server = http.createServer(app);
 const io = new Server(server);
 
+app.use(cors());
+
 app.use(express.static('build'));
+
 app.use((req, res, next) => {
     res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
 
 const userSocketMap = {};
+
 function getAllConnectedClients(roomId) {
     // Map
     return Array.from(io.sockets.adapter.rooms.get(roomId) || []).map(
