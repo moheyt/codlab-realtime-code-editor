@@ -6,14 +6,8 @@ const { Server } = require('socket.io');
 const ACTIONS = require('./src/Actions');
 
 const server = http.createServer(app);
-const io = new Server(server, {
-  cors: {
-    origin: 'https://codlab-realtime-code-editor.netlify.app', // Allow requests from your specific client origin
-    methods: ['GET', 'POST'],
-    allowedHeaders: ['my-custom-header'],
-    credentials: true
-  }
-});
+const io = new Server(server);
+
 
 app.use(express.static('build'));
 
