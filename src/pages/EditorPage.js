@@ -19,13 +19,13 @@ const EditorPage = () => {
   const reactNavigator = useNavigate();
   const [clients, setClients] = useState([]);
 
-  const handleErrors = (err) => {
-    console.log("Socket error =", err);
-    toast.error("Socket connection failed, Try again!");
-    reactNavigator("/");
-  };
-
   useEffect(() => {
+    const handleErrors = (err) => {
+      console.log("Socket error = ", err);
+      toast.error("Socket connection failed, Try again!");
+      reactNavigator("/");
+    };
+
     const init = async () => {
       socketRef.current = await initSocket();
       socketRef.current.on("connect_error", handleErrors);
@@ -36,15 +36,14 @@ const EditorPage = () => {
         username: location.state?.username,
       });
 
-      // Listening for joined event
       socketRef.current.on(
         ACTIONS.JOINED,
-        ({ clients, username, socketId }) => {
+        ({ clients: joinedClients, username, socketId }) => {
           if (username !== location.state?.username) {
             toast.success(`${username} joined the room`);
             console.log(`${username} joined`);
           }
-          setClients(clients);
+          setClients(joinedClients);
           socketRef.current.emit(ACTIONS.SYNC_CODE, {
             code: codeRef.current,
             socketId,
@@ -52,14 +51,14 @@ const EditorPage = () => {
         }
       );
 
-      // Listening for disconnected
       socketRef.current.on(ACTIONS.DISCONNECTED, ({ socketId, username }) => {
         toast.success(`${username} left the room.`);
-        setClients((prev) =>
-          prev.filter((client) => client.socketId !== socketId)
-        );
+        setClients((prevClients) => {
+          return prevClients.filter((client) => client.socketId !== socketId);
+        });
       });
     };
+
     init();
 
     return () => {
@@ -67,20 +66,20 @@ const EditorPage = () => {
       socketRef.current.off(ACTIONS.JOINED);
       socketRef.current.off(ACTIONS.DISCONNECTED);
     };
-  }, [location.state, roomId, reactNavigator]);
+  }, [roomId, location.state, reactNavigator]);
 
   async function copyRoomId() {
     try {
       await navigator.clipboard.writeText(roomId);
-      toast.success("Room ID has been copied");
+      toast.success('Room ID has been copied')
     } catch (err) {
-      toast.error("Could not copy the Room Id");
+      toast.error('Could not copy the Room Id');
       console.error(err);
     }
   }
 
   function leaveRoom() {
-    reactNavigator("/");
+    reactNavigator('/');
   }
 
   if (!location.state) {
