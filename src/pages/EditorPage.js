@@ -133,5 +133,3 @@ const EditorPage = () => {
 };
 
 export default EditorPage;
-
-// done
